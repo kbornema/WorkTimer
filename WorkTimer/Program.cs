@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Media;
 
 namespace WorkTimer
@@ -18,28 +19,38 @@ namespace WorkTimer
         private static void Main(string[] args)
         {
             ReadConfigFile();
-
             SetupSounds();
-
             SetupMinutesAndMainLoop();
         }
 
         private static void SetupSounds()
         {
-            _alarmSound = new MediaPlayer();
-            _alarmSound.Open(new Uri("Alarm.wav", UriKind.Relative));
-            //TODO: load local value from settings
-            _alarmSound.Volume = _globalVolume;
+            const string ALARM_PATH = "Alarm.wav";
+            if(File.Exists(ALARM_PATH))
+            {
+                _alarmSound = new MediaPlayer();
+                _alarmSound.Open(new Uri(ALARM_PATH, UriKind.Relative));
+                //TODO: load local value from settings
+                _alarmSound.Volume = _globalVolume;
+            }
 
-            _tickSound = new MediaPlayer();
-            _tickSound.Open(new Uri("Tick.wav", UriKind.Relative));
-            //TODO: load local value from settings
-            _tickSound.Volume = _globalVolume;
+            const string TICK_PATH = "Tick.wav";
+            if (File.Exists(TICK_PATH))
+            {
+                _tickSound = new MediaPlayer();
+                _tickSound.Open(new Uri(TICK_PATH, UriKind.Relative));
+                //TODO: load local value from settings
+                _tickSound.Volume = _globalVolume;
+            }
 
-            _tockSound = new MediaPlayer();
-            _tockSound.Open(new Uri("Tock.wav", UriKind.Relative));
-            //TODO: load local value from settings
-            _tockSound.Volume = _globalVolume;
+            const string TOCK_PATH = "Tock.wav";
+            if (File.Exists(TOCK_PATH))
+            {
+                _tockSound = new MediaPlayer();
+                _tockSound.Open(new Uri(TOCK_PATH, UriKind.Relative));
+                //TODO: load local value from settings
+                _tockSound.Volume = _globalVolume;
+            }
         }
 
         private static void SetupMinutesAndMainLoop()
@@ -191,14 +202,25 @@ namespace WorkTimer
 
                         if (isPaused)
                         {
-                            _tickSound.Stop();
-                            _tockSound.Stop();
+                            if(_tickSound != null)
+                            {
+                                _tickSound.Stop();
+                            }
+
+                            if (_tockSound != null)
+                            {
+                                _tockSound.Stop();
+                            }
+
                             Console.WriteLine("- Timer is paused -");
                         }
                     }
                     else if (key.Key == ConsoleKey.S)
                     {
-                        _alarmSound.Play();
+                        if (_alarmSound != null)
+                        {
+                            _alarmSound.Play();
+                        }
                         return;
                     }
                     else if (key.Key == ConsoleKey.X)
@@ -212,13 +234,27 @@ namespace WorkTimer
                 {
                     if (tick)
                     {
-                        _tickSound.Play();
-                        _tockSound.Stop();
+                        if (_tickSound != null)
+                        {
+                            _tickSound.Play();
+                        }
+
+                        if (_tockSound != null)
+                        {
+                            _tockSound.Stop();
+                        }
                     }
                     else
                     {
-                        _tockSound.Play();
-                        _tickSound.Stop();
+                        if (_tockSound != null)
+                        {
+                            _tockSound.Play();
+                        }
+
+                        if (_tickSound != null)
+                        {
+                            _tickSound.Stop();
+                        }
                     }
 
                     tick = !tick;
@@ -242,7 +278,10 @@ namespace WorkTimer
                 System.Threading.Thread.Sleep(1000);
             }
 
-            _alarmSound.Play();
+            if(_alarmSound != null)
+            {
+                _alarmSound.Play();
+            }
         }
     }
 }
