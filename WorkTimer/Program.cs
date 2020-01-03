@@ -181,6 +181,33 @@ namespace WorkTimer
 
             while (isRunning)
             {
+                while (Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey(true);
+
+                    if (key.Key == ConsoleKey.P)
+                    {
+                        isPaused = !isPaused;
+
+                        if (isPaused)
+                        {
+                            _tickSound.Stop();
+                            _tockSound.Stop();
+                            Console.WriteLine("- Timer is paused -");
+                        }
+                    }
+                    else if (key.Key == ConsoleKey.S)
+                    {
+                        _alarmSound.Play();
+                        return;
+                    }
+                    else if (key.Key == ConsoleKey.X)
+                    {
+                        System.Environment.Exit(0);
+                        return;
+                    }
+                }
+
                 if (!isPaused)
                 {
                     if (tick)
@@ -195,50 +222,21 @@ namespace WorkTimer
                     }
 
                     tick = !tick;
-                }
-
-                Console.Clear();
-                Console.WriteLine($"Time left: {leftHours.ToString("00")}:{leftMinutes.ToString("00")}:{leftSeconds.ToString("00")}");
-                Console.WriteLine($"P: Pause. S: Stop. X: Exit");
-
-                if (isPaused)
-                {
-                    Console.WriteLine("- Timer is paused -");
-                }
-
-                while (Console.KeyAvailable)
-                {
-                    var key = Console.ReadKey(true);
-                    Console.WriteLine(key.Key);
-                    
-                    if(key.Key == ConsoleKey.P)
-                    {
-                        isPaused = !isPaused;
-
-                        if (isPaused)
-                        {
-                            _tickSound.Stop();
-                            _tockSound.Stop();
-                        }
-                    }
-                    else if(key.Key == ConsoleKey.S)
-                    {
-                        _alarmSound.Play();
-                        return;
-                    }
-                    else if (key.Key == ConsoleKey.X)
-                    {
-                        System.Environment.Exit(0);
-                    }
-                }
-
-                if(!isPaused)
-                {
-                    totalSecondsLeft--;
 
                     leftHours = (totalSecondsLeft / 3600);
                     leftMinutes = (totalSecondsLeft / 60) % 60;
                     leftSeconds = totalSecondsLeft % 60;
+
+                    Console.Clear();
+                    Console.WriteLine($"Time left: {leftHours.ToString("00")}:{leftMinutes.ToString("00")}:{leftSeconds.ToString("00")}");
+                    Console.WriteLine($"P: Pause. S: Stop. X: Exit");
+
+                    totalSecondsLeft--;
+
+                    if (totalSecondsLeft <= 0)
+                    {
+                        isRunning = false;
+                    }
                 }
 
                 System.Threading.Thread.Sleep(1000);
