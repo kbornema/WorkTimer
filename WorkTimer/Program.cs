@@ -73,7 +73,7 @@ namespace WorkTimer
 
             if (!shouldRepeat)
             {
-                _alarmSound.Play();
+                TryPlaySound(_alarmSound);
                 SetupMinutesAndMainLoop();
             }
         }
@@ -178,6 +178,15 @@ namespace WorkTimer
             return false;
         }
 
+        private static void TryPlaySound(MediaPlayer player)
+        {
+            if(player != null)
+            {
+                player.Stop();
+                player.Play();
+            }
+        }
+
         private static void SingleTimer()
         {
             bool tick = true;
@@ -217,10 +226,7 @@ namespace WorkTimer
                     }
                     else if (key.Key == ConsoleKey.S)
                     {
-                        if (_alarmSound != null)
-                        {
-                            _alarmSound.Play();
-                        }
+                        TryPlaySound(_alarmSound);
                         return;
                     }
                     else if (key.Key == ConsoleKey.X)
@@ -234,27 +240,11 @@ namespace WorkTimer
                 {
                     if (tick)
                     {
-                        if (_tickSound != null)
-                        {
-                            _tickSound.Play();
-                        }
-
-                        if (_tockSound != null)
-                        {
-                            _tockSound.Stop();
-                        }
+                        TryPlaySound(_tickSound);
                     }
                     else
                     {
-                        if (_tockSound != null)
-                        {
-                            _tockSound.Play();
-                        }
-
-                        if (_tickSound != null)
-                        {
-                            _tickSound.Stop();
-                        }
+                        TryPlaySound(_tockSound);
                     }
 
                     tick = !tick;
@@ -278,10 +268,8 @@ namespace WorkTimer
                 System.Threading.Thread.Sleep(1000);
             }
 
-            if(_alarmSound != null)
-            {
-                _alarmSound.Play();
-            }
+
+            TryPlaySound(_alarmSound);
         }
     }
 }
