@@ -73,7 +73,6 @@ namespace WorkTimer
 
             if (!shouldRepeat)
             {
-                TryPlaySound(_alarmSound);
                 SetupMinutesAndMainLoop();
             }
         }
